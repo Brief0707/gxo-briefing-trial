@@ -1,0 +1,14 @@
+{
+  "date": "Saturday, July 4, 2026",
+  "shift": "AM / Days",
+  "safetyMessage": "Keep all main aisles clear of loose plastic wrap. 450 days accident-free!",
+  "performanceTargets": {
+    "pickingTarget": "180 cases per hour",
+    "marshallingTarget": "12 bays cleared per hour"
+  },
+  "announcements": [
+    "Sainsbury's peak volume expected this Tuesday. Great effort on attendance, team!",
+    "Overtime slots for Sunday are now open on the portal.",
+    "Please return all PPTs to the charging bays at the end of the shift."
+  ]
+}
