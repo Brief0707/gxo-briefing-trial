@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GXO Sainsbury's Daily Briefing</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>GXO @ Sainsbury's Daily Briefing</h1>
+        <div id="shift-info">Loading shift info...</div>
+    </header>
+
+    <main class="dashboard-grid">
+        <!-- Safety Section (Full Width Top) -->
+        <section class="card alert-card">
+            <h2>⚠️ Health, Safety & Quality Focus</h2>
+            <div id="safety-text" class="large-text-box">Loading safety briefing details...</div>
+        </section>
+
+        <!-- Targets Section -->
+        <section class="card">
+            <h2>📊 Shift Operational Targets</h2>
+            <ul id="targets-list">Loading targets...</ul>
+        </section>
+
+        <!-- Overtime Section (NEW) -->
+        <section class="card overtime-card">
+            <h2>⏳ Available Overtime Slots</h2>
+            <ul id="overtime-list">Loading overtime options...</ul>
+        </section>
+
+        <!-- Announcements Section (Full Width Bottom) -->
+        <section class="card full-width-card">
+            <h2>📢 Key Site Announcements</h2>
+            <ul id="announcements-list">Loading announcements...</ul>
+        </section>
+    </main>
+
+    <!-- MANAGER UPDATE PANEL -->
+    <section class="manager-panel-container">
+        <div id="password-gate-block">
+            <label for="admin-pass-input" style="font-weight: bold; margin-right: 10px;">Manager Access:</label>
+            <input type="password" id="admin-pass-input" placeholder="Enter PIN code...">
+            <button id="toggle-admin-btn" onclick="checkAdminPassword()">Unlock Panel</button>
+        </div>
+        
+        <div id="admin-form-block" style="display: none;">
+            <h3>✏️ Update Daily Briefing Layout</h3>
+            <div class="form-group">
+                <label>Shift Name / Type:</label>
+                <input type="text" id="input-shift" value="AM / Days Shift">
+            </div>
+            <div class="form-group">
+                <label>Health & Safety Message:</label>
+                <textarea id="input-safety" rows="6"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Picking Target:</label>
+                <input type="text" id="input-picking">
+            </div>
+            <div class="form-group">
+                <label>Marshalling Target:</label>
+                <input type="text" id="input-marshalling">
+            </div>
+            <div class="form-group">
+                <label>Available Overtime (Type one slot per line):</label>
+                <textarea id="input-overtime" rows="4" placeholder="e.g., Sunday Goods-In: 4 slots&#10;Monday Ambient Picking: 6 slots"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Announcements (Type one message per line):</label>
+                <textarea id="input-announcements" rows="4"></textarea>
+            </div>
+            <button id="save-briefing-btn" onclick="saveManagerUpdates()">💾 Publish Live Update to Screen</button>
+            <button id="lock-panel-btn" onclick="lockAdminPanel()" style="background-color: #666; margin-top: 10px;">🔒 Lock Panel</button>
+        </div>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f6;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+header {
+    background-color: #ff8c00; /* Sainsbury's Orange */
+    color: white;
+    padding: 18px 30px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+#shift-info {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+.alert-card {
+    grid-column: 1 / -1; 
+    border-left: 10px solid #d9534f;
+}
+.full-width-card {
+    grid-column: 1 / -1;
+}
+.overtime-card {
+    border-left: 6px solid #ff8c00;
+}
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+.large-text-box {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    color: #222;
+    font-weight: 500;
+}
+h2 {
+    margin-top: 0;
+    color: #111;
+    font-size: 1.5rem;
+    border-bottom: 3px solid #f4f4f6;
+    padding-bottom: 12px;
+}
+ul {
+    padding-left: 20px;
+}
+li {
+    margin-bottom: 14px;
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+/* Manager Panel Inputs */
+.manager-panel-container {
+    margin-top: 50px;
+    padding: 25px;
+    background: #eef2f5;
+    border-radius: 8px;
+    border: 2px dashed #bbb;
+}
+#admin-pass-input {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+#toggle-admin-btn, #lock-panel-btn {
+    background-color: #333;
+    color: white;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+}
+#admin-form-block {
+    margin-top: 25px;
+    background: white;
+    padding: 25px;
+    border-radius: 6px;
+}
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #333;
+}
+.form-group input, .form-group textarea {
+    padding: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 1.05rem;
+    font-family: inherit;
+}
+#save-briefing-btn {
+    background-color: #ff8c00;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
