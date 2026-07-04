@@ -3,80 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GXO Sainsbury's Daily Briefing</title>
+    <title>GXO Warehouse Shift Briefing</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>GXO @ Sainsbury's Daily Briefing</h1>
-        <div id="shift-info">Loading shift info...</div>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="logo-container">
+            <span class="logo-text">GXO</span>
+            <span class="logo-subtext">Logistics</span>
+        </div>
+        <div class="title-container">
+            <h1>Daily Shift Briefing</h1>
+            <p id="current-date">Loading date...</p>
+        </div>
     </header>
 
-    <main class="dashboard-grid">
-        <!-- Safety Section (Full Width Top) -->
-        <section class="card alert-card">
-            <h2>⚠️ Health, Safety & Quality Focus</h2>
-            <div id="safety-text" class="large-text-box">Loading safety briefing details...</div>
+    <!-- Main Dashboard Metrics -->
+    <main class="dashboard-container">
+        
+        <!-- Targets Card -->
+        <section class="card target-card">
+            <h2>🎯 Shift Performance Targets</h2>
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <span class="label">Picking Target</span>
+                    <span class="value" id="display-pick-target">--</span>
+                    <span class="unit">units/hr</span>
+                </div>
+                <div class="metric-box">
+                    <span class="label">Packing Target</span>
+                    <span class="value" id="display-pack-target">--</span>
+                    <span class="unit">units/hr</span>
+                </div>
+            </div>
         </section>
 
-        <!-- Targets Section -->
-        <section class="card">
-            <h2>📊 Shift Operational Targets</h2>
-            <ul id="targets-list">Loading targets...</ul>
+        <!-- Announcements Card -->
+        <section class="card announcements-card">
+            <h2>📢 Important Announcements</h2>
+            <div class="announcement-content">
+                <p id="display-announcement">Loading latest updates...</p>
+            </div>
         </section>
 
-        <!-- Overtime Section (NEW) -->
+        <!-- Overtime Slots Card -->
         <section class="card overtime-card">
-            <h2>⏳ Available Overtime Slots</h2>
-            <ul id="overtime-list">Loading overtime options...</ul>
+            <h2>⏱️ Available Overtime Slots</h2>
+            <ul class="ot-list" id="display-ot-slots">
+                <!-- Slots will inject here dynamically -->
+            </ul>
         </section>
 
-        <!-- Announcements Section (Full Width Bottom) -->
-        <section class="card full-width-card">
-            <h2>📢 Key Site Announcements</h2>
-            <ul id="announcements-list">Loading announcements...</ul>
-        </section>
     </main>
 
-    <!-- MANAGER UPDATE PANEL -->
-    <section class="manager-panel-container">
-        <div id="password-gate-block">
-            <label for="admin-pass-input" style="font-weight: bold; margin-right: 10px;">Manager Access:</label>
-            <input type="password" id="admin-pass-input" placeholder="Enter PIN code...">
-            <button id="toggle-admin-btn" onclick="checkAdminPassword()">Unlock Panel</button>
-        </div>
+    <!-- Manager Control Panel Section -->
+    <footer class="manager-footer">
+        <hr class="divider">
         
-        <div id="admin-form-block" style="display: none;">
-            <h3>✏️ Update Daily Briefing Layout</h3>
-            <div class="form-group">
-                <label>Shift Name / Type:</label>
-                <input type="text" id="input-shift" value="AM / Days Shift">
+        <!-- Auth View -->
+        <div id="manager-auth-section" class="auth-box">
+            <h3>🔒 Manager Administrative Access</h3>
+            <div class="input-group">
+                <input type="password" id="manager-pin" placeholder="Enter Manager PIN">
+                <button id="btn-unlock" class="btn btn-primary">Unlock Panel</button>
             </div>
-            <div class="form-group">
-                <label>Health & Safety Message:</label>
-                <textarea id="input-safety" rows="6"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Picking Target:</label>
-                <input type="text" id="input-picking">
-            </div>
-            <div class="form-group">
-                <label>Marshalling Target:</label>
-                <input type="text" id="input-marshalling">
-            </div>
-            <div class="form-group">
-                <label>Available Overtime (Type one slot per line):</label>
-                <textarea id="input-overtime" rows="4" placeholder="e.g., Sunday Goods-In: 4 slots&#10;Monday Ambient Picking: 6 slots"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Announcements (Type one message per line):</label>
-                <textarea id="input-announcements" rows="4"></textarea>
-            </div>
-            <button id="save-briefing-btn" onclick="saveManagerUpdates()">💾 Publish Live Update to Screen</button>
-            <button id="lock-panel-btn" onclick="lockAdminPanel()" style="background-color: #666; margin-top: 10px;">🔒 Lock Panel</button>
         </div>
-    </section>
 
+        <!-- Control View (Hidden by default) -->
+        <div id="manager-panel-section" class="panel-box hidden">
+            <h3>🛠️ Edit Dashboard Content</h3>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="input-pick-target">Picking Target:</label>
+                    <input type="number" id="input-pick-target">
+                </div>
+                <div class="form-group">
+                    <label for="input-pack-target">Packing Target:</label>
+                    <input type="number" id="input-pack-target">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="input-announcement">Broadcast Announcement:</label>
+                <textarea id="input-announcement" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="input-ot-slots">Overtime Slots (Comma separated, e.g., 06:00-14:00, 14:00-22:00):</label>
+                <input type="text" id="input-ot-slots">
+            </div>
+
+            <div class="panel-actions">
+                <button id="btn-publish" class="btn btn-success">Publish Live Update to Screen</button>
+                <button id="btn-lock" class="btn btn-secondary">Lock Panel</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Script Connection -->
     <script src="app.js"></script>
 </body>
 </html>

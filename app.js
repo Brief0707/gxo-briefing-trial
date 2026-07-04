@@ -1,100 +1,143 @@
-const defaultData = {
-    shift: "AM / Days Shift",
-    safetyMessage: "Ensure clear thoroughfares. Watch out for FLT movement near marshalling lanes. Full PPE mandatory outside green walkways.",
-    pickingTarget: "180 cases per hour",
-    marshallingTarget: "12 bays cleared per hour",
-    overtime: [
-        "Sunday AM Goods-In: 4 slots open",
-        "Monday PM Picking (Ambient): 6 slots open"
-    ],
-    announcements: [
-        "Sainsbury's weekend volume is high. Excellent pacing team!",
-        "Chilled chamber team briefing at 10:00 AM."
-    ]
-};
+// --- CONFIGURATION MANAGEMENT ---
+// Replace the blank token string below with your newly generated secret Personal Access Token (classic).
+const GITHUB_TOKEN = "ghp_YOUR_NEW_SECRET_TOKEN_HERE"; 
+const REPO_OWNER = "Kebabs69"; 
+const REPO_NAME = "gxo-briefing-trial";
+const FILE_PATH = "briefing-data.json";
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadBriefingData();
+// --- DOM ELEMENTS CONFIGURATION ---
+const displayPick = document.getElementById('display-pick-target');
+const displayPack = document.getElementById('display-pack-target');
+const displayAnnounce = document.getElementById('display-announcement');
+const displayOT = document.getElementById('display-ot-slots');
+const currentDateEl = document.getElementById('current-date');
+
+const authSection = document.getElementById('manager-auth-section');
+const panelSection = document.getElementById('manager-panel-section');
+const pinInput = document.getElementById('manager-pin');
+
+const inputPick = document.getElementById('input-pick-target');
+const inputPack = document.getElementById('input-pack-target');
+const inputAnnounce = document.getElementById('input-announcement');
+const inputOT = document.getElementById('input-ot-slots');
+
+// Set current calendar date UI element
+const today = new Date();
+currentDateEl.innerText = today.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// --- DATA ACCESS LAYERS (UNLIMITED CONSUMPTION BY WORKERS) ---
+function loadBriefingData() {
+    // Append unique cache-busting parameter string to guarantee real-time downloads
+    fetch(`${FILE_PATH}?t=${new Date().getTime()}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Database initialization file missing.");
+            return response.json();
+        })
+        .then(data => {
+            renderDashboard(data);
+            populateFormInputs(data);
+        })
+        .catch(error => {
+            console.error("Error synchronizing tracking data matrix:", error);
+            displayAnnounce.innerText = "Failed to sync updates from server. Please refresh your view.";
+        });
+}
+
+function renderDashboard(data) {
+    displayPick.innerText = data.pickingTarget || '--';
+    displayPack.innerText = data.packingTarget || '--';
+    displayAnnounce.innerText = data.announcement || 'No active updates currently broadcast.';
+    
+    displayOT.innerHTML = '';
+    if (data.overtimeSlots && data.overtimeSlots.length > 0) {
+        data.overtimeSlots.forEach(slot => {
+            const li = document.createElement('li');
+            li.className = 'ot-item';
+            li.innerHTML = `<span class="clock-icon">🕒</span> <span class="time-text">${slot}</span>`;
+            displayOT.appendChild(li);
+        });
+    } else {
+        displayOT.innerHTML = `<li class="ot-empty">No overtime windows open for this shift.</li>`;
+    }
+}
+
+function populateFormInputs(data) {
+    inputPick.value = data.pickingTarget || '';
+    inputPack.value = data.packingTarget || '';
+    inputAnnounce.value = data.announcement || '';
+    inputOT.value = data.overtimeSlots ? data.overtimeSlots.join(', ') : '';
+}
+
+// --- ADMINISTRATIVE SECURITY CONTROL PANELS ---
+document.getElementById('btn-unlock').addEventListener('click', () => {
+    if (pinInput.value === 'gxo123') {
+        authSection.classList.add('hidden');
+        panelSection.classList.remove('hidden');
+        pinInput.value = '';
+    } else {
+        alert('Invalid Administrative Verification Credentials.');
+    }
 });
 
-function loadBriefingData() {
-    let data;
-    try {
-        let savedData = localStorage.getItem('gxo_briefing_data');
-        data = savedData ? JSON.parse(savedData) : defaultData;
-        
-        // Safety validation to prevent freeze if switching code styles
-        if (!data.overtime || !Array.isArray(data.overtime)) {
-            data = defaultData;
-        }
-    } catch(e) {
-        data = defaultData;
-    }
+document.getElementById('btn-lock').addEventListener('click', () => {
+    panelSection.classList.add('hidden');
+    authSection.classList.remove('hidden');
+});
 
-    // Automatic Live Date Generation
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+// --- CLOUD WRITE LAYER (VIA SECURE GITHUB API ENDPOINTS) ---
+document.getElementById('btn-publish').addEventListener('click', () => {
+    const otArray = inputOT.value.split(',')
+                                 .map(item => item.trim())
+                                 .filter(item => item.length > 0);
 
-    // Render data to UI
-    document.getElementById('shift-info').innerText = `${formattedDate} | ${data.shift || 'Shift'}`;
-    document.getElementById('safety-text').innerHTML = (data.safetyMessage || '').replace(/\n/g, '<br>');
-    
-    document.getElementById('targets-list').innerHTML = `
-        <li><strong>Picking Target:</strong> ${data.pickingTarget || 'N/A'}</li>
-        <li><strong>Marshalling Target:</strong> ${data.marshallingTarget || 'N/A'}</li>
-    `;
-
-    // Render Overtime list safely
-    const otList = data.overtime || [];
-    document.getElementById('overtime-list').innerHTML = otList.length > 0 
-        ? otList.map(item => `<li>${item}</li>`).join('')
-        : "<li>No overtime slots listed for this shift.</li>";
-    
-    // Render Announcements list safely
-    const annList = data.announcements || [];
-    document.getElementById('announcements-list').innerHTML = annList.length > 0
-        ? annList.map(item => `<li>${item}</li>`).join('')
-        : "<li>No announcements listed.</li>";
-
-    // Pre-populate editing input boxes cleanly
-    document.getElementById('input-shift').value = data.shift || '';
-    document.getElementById('input-safety').value = data.safetyMessage || '';
-    document.getElementById('input-picking').value = data.pickingTarget || '';
-    document.getElementById('input-marshalling').value = data.marshallingTarget || '';
-    document.getElementById('input-overtime').value = otList.join('\n');
-    document.getElementById('input-announcements').value = annList.join('\n');
-}
-
-function checkAdminPassword() {
-    const inputPass = document.getElementById('admin-pass-input').value;
-    if (inputPass === "gxo123") {
-        document.getElementById('admin-form-block').style.display = 'block';
-        document.getElementById('password-gate-block').style.display = 'none';
-        document.getElementById('admin-pass-input').value = "";
-    } else {
-        alert("Access Denied: Incorrect PIN Code.");
-    }
-}
-
-function lockAdminPanel() {
-    document.getElementById('admin-form-block').style.display = 'none';
-    document.getElementById('password-gate-block').style.display = 'block';
-}
-
-function saveManagerUpdates() {
-    const overtimeLines = document.getElementById('input-overtime').value.split('\n').filter(line => line.trim() !== '');
-    const announcementLines = document.getElementById('input-announcements').value.split('\n').filter(line => line.trim() !== '');
-
-    const updatedData = {
-        shift: document.getElementById('input-shift').value,
-        safetyMessage: document.getElementById('input-safety').value,
-        pickingTarget: document.getElementById('input-picking').value,
-        marshallingTarget: document.getElementById('input-marshalling').value,
-        overtime: overtimeLines,
-        announcements: announcementLines
+    const updatedPayload = {
+        pickingTarget: parseInt(inputPick.value) || 0,
+        packingTarget: parseInt(inputPack.value) || 0,
+        announcement: inputAnnounce.value,
+        overtimeSlots: otArray
     };
 
-    localStorage.setItem('gxo_briefing_data', JSON.stringify(updatedData));
-    loadBriefingData();
-    lockAdminPanel();
-}
+    const targetUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+
+    // Step A: Grab data signature (SHA) from target repository structure
+    fetch(targetUrl)
+        .then(res => {
+            if (!res.ok) throw new Error("Could not fetch remote version info.");
+            return res.json();
+        })
+        .then(fileMeta => {
+            const currentSha = fileMeta.sha;
+            // Convert data to uniform Base64 structure for safe server transport
+            const encodedContent = btoa(unescape(encodeURIComponent(JSON.stringify(updatedPayload, null, 2))));
+
+            // Step B: Direct payload injection to cloud repository files
+            return fetch(targetUrl, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `token ${GITHUB_TOKEN}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: "Administrative metrics update via Briefing Panel",
+                    content: encodedContent,
+                    sha: currentSha,
+                    branch: "main"
+                })
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Success! The data has been deployed safely. All worker devices will show the updates within seconds.");
+                loadBriefingData(); // Reload UI locally
+            } else {
+                alert("Write request rejected. Check authorization key verification settings inside source scripts.");
+            }
+        })
+        .catch(err => {
+            console.error("Critical API Synchronization Error:", err);
+            alert("Connection lost. Could not deliver payload update to remote Git repositories.");
+        });
+});
+
+// Start initialization on startup
+loadBriefingData();
